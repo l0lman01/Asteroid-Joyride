@@ -2,5 +2,8 @@
   publish = "build"
   command = "npm run build"
 
-[context.production.environment]
-  NODE_ENV = "production"
+# Note: do not force NODE_ENV=production here — Netlify needs devDependencies
+# (webpack, babel, etc.) available during the build. If you set NODE_ENV to
+# "production" at build time, npm may skip installing devDependencies and the
+# build will fail with missing tools. Leave environment vars to Netlify UI if
+# you need them, or explicitly set NPM_FLAGS to include dev deps instead.
