@@ -1,3 +1,227 @@
-<!doctype html><html><head><meta charset="utf-8"><style>body {
-        padding: 200px;
-      }</style></head><body><p>Test page for visual viewport resize on scroll</p><script src="vendor.js"></script><script src="app.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Asteroid Joyride</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><style>*, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #0a0a1a;
+        color: #c8c8e0;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Starfield background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent),
+          radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1.5px 1.5px at 50% 10%, rgba(200,200,255,0.9), transparent),
+          radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.7), transparent),
+          radial-gradient(1.5px 1.5px at 15% 80%, rgba(200,220,255,0.8), transparent),
+          radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.4), transparent),
+          radial-gradient(1px 1px at 90% 15%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1px 1px at 40% 50%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 25% 35%, rgba(200,200,255,0.7), transparent),
+          radial-gradient(1px 1px at 75% 85%, rgba(255,255,255,0.4), transparent),
+          radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1px 1px at 95% 45%, rgba(200,220,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 55% 30%, rgba(255,255,255,0.8), transparent),
+          radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.3), transparent);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .page-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px 60px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        font-size: 3rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff6ec7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 20px rgba(123, 47, 247, 0.4));
+        margin-bottom: 8px;
+      }
+
+      .header .tagline {
+        font-size: 1rem;
+        font-weight: 300;
+        color: #8888aa;
+        letter-spacing: 2px;
+      }
+
+      /* Game container */
+      .game-container {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+          0 0 40px rgba(123, 47, 247, 0.15),
+          0 0 80px rgba(0, 212, 255, 0.08),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(123, 47, 247, 0.2);
+        background: #000;
+      }
+
+      .game-container canvas {
+        display: block;
+      }
+
+      /* How to Play section */
+      .how-to-play {
+        max-width: 1000px;
+        width: 100%;
+        margin-top: 40px;
+      }
+
+      .how-to-play h2 {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+        color: #00d4ff;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .instructions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+      }
+
+      .instruction-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: border-color 0.3s ease, background 0.3s ease;
+      }
+
+      .instruction-card:hover {
+        border-color: rgba(123, 47, 247, 0.3);
+        background: rgba(123, 47, 247, 0.05);
+      }
+
+      .instruction-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .instruction-key {
+        display: inline-block;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        background: rgba(0, 212, 255, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.25);
+        color: #00d4ff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+      }
+
+      .instruction-card p {
+        font-size: 0.9rem;
+        font-weight: 300;
+        line-height: 1.5;
+        color: #9999bb;
+      }
+
+      /* Tips section */
+      .tips {
+        max-width: 1000px;
+        width: 100%;
+        margin-top: 32px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 24px 28px;
+      }
+
+      .tips h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        color: #ff6ec7;
+        margin-bottom: 14px;
+      }
+
+      .tips ul {
+        list-style: none;
+        display: grid;
+        gap: 8px;
+      }
+
+      .tips li {
+        font-size: 0.9rem;
+        font-weight: 300;
+        color: #8888aa;
+        padding-left: 20px;
+        position: relative;
+        line-height: 1.5;
+      }
+
+      .tips li::before {
+        content: '\2726';
+        position: absolute;
+        left: 0;
+        color: #7b2ff7;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 48px;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #444466;
+        letter-spacing: 1px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1040px) {
+        .game-container {
+          max-width: 100%;
+          overflow-x: auto;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .header h1 {
+          font-size: 2rem;
+          letter-spacing: 2px;
+        }
+        .instructions-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }</style></head><body><div class="page-wrapper"><header class="header"><h1>Asteroid Joyride</h1><p class="tagline">Navigate the void. Collect coins. Survive.</p></header><div class="game-container" id="game-container"></div><section class="how-to-play"><h2>How to Play</h2><div class="instructions-grid"><div class="instruction-card"><span class="instruction-icon" aria-hidden="true">&#x1F680;</span> <span class="instruction-key">SPACE</span><p>Press Space to thrust upward and dodge obstacles. Gravity pulls you down, so time your jumps carefully.</p></div><div class="instruction-card"><span class="instruction-icon" aria-hidden="true">&#x1F4A5;</span> <span class="instruction-key">CLICK</span><p>Click anywhere to fire a shot. Destroy incoming asteroids before they reach you.</p></div><div class="instruction-card"><span class="instruction-icon" aria-hidden="true">&#x1FA99;</span> <span class="instruction-key">COINS</span><p>Collect coins to boost your score. Every 50 points the game speeds up, so stay sharp.</p></div><div class="instruction-card"><span class="instruction-icon" aria-hidden="true">&#x1F504;</span> <span class="instruction-key">RESTART</span><p>Hit the restart button in the top-left corner after a crash to try again and beat your high score.</p></div></div></section><section class="tips"><h3>Pro Tips</h3><ul><li>Keep moving — staying in one place makes you an easy target for asteroid clusters</li><li>Shoot strategically; focus on asteroids directly in your flight path</li><li>Coins appear in groups of 10 — plan your path to grab the whole line</li><li>The game gets faster over time, so build your score early while the pace is manageable</li><li>Your high score persists during the session — keep playing to beat your personal best</li></ul></section><div class="footer">Asteroid Joyride &mdash; A Phaser 3 Space Game</div></div><script src="vendor.js"></script><script src="app.js"></script></body></html>
