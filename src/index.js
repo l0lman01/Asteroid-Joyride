@@ -9,6 +9,7 @@ const config = {
   height: 500,
   pixelArt: true,
   transparent: true,
+  parent: 'game-container',
   physics: {
     default: 'arcade',
     arcade: {
