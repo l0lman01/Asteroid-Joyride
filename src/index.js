@@ -10,6 +10,11 @@ const config = {
   pixelArt: true,
   transparent: true,
   parent: 'game-container',
+  input: {
+    keyboard: {
+      capture: [32]
+    }
+  },
   physics: {
     default: 'arcade',
     arcade: {
